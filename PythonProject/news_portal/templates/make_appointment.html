@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make appointment</title>
+</head>
+<body>
+    <h1>Make appointment</h1>
+    <form action="{% url 'appointment' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="client_name"> Ваше имя</label>
+        <input type="text" id="client_name" name="client_name"><br>
+        <label for="message"> Описание</label>
+        <input type="text" id="message" name="message"><br>
+        <input type="submit">
+    </form>
+</body>
+</html>
