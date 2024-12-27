@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 # Create your views here.
 from django.urls import reverse_lazy
 from datetime import datetime
+from django.core.cache import cache
 
 from pyexpat.errors import messages
 from unicodedata import category
@@ -15,6 +16,7 @@ from django.views.generic import (TemplateView, ListView, DetailView,
 from .filters import PostFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from appointment.tasks import send_m
 
 class BaseView(TemplateView):
     template_name = 'base.html'
@@ -47,6 +49,15 @@ class PostsDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'single_post'
+    queryset = Post.objects.all()
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+        return obj
 
 
 class PostCreate(CreateView):
@@ -57,6 +68,7 @@ class PostCreate(CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.quantity = 13
+        send_m.delay()
         return super().form_valid(form)
 
 

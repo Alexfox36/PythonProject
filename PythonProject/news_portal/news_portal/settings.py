@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
-from django.conf.global_settings import EMAIL_HOST, EMAIL_PORT
+from django.conf.global_settings import EMAIL_HOST, EMAIL_PORT, EMAIL_BACKEND
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -111,6 +111,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 
 ACCOUNT_FORMS = {'signup': 'sign.models.BasicSignupForm'}
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = 'alexph'
@@ -203,3 +204,9 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'),
+    }
+}

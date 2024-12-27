@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.urls import reverse
 import datetime
@@ -48,11 +49,16 @@ class Post(models.Model):
     post_content = models.TextField()
     post_category = models.ManyToManyField(Categories, through='PostCategory')
     ratint_post = models.FloatField(default=0.0)
+
     def __str__(self):
         return f'{self.post_title}'
 
     def get_absolute_url(self):
-        return reverse('post_detail', args=[str(self.id)])
+        return f'/news/{self.id}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'post-{self.pk}')
 
     def like(self):
         self.ratint_post += 1

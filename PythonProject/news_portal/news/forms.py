@@ -17,11 +17,11 @@ class PostForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        description = cleaned_data.get("post_title")
+        post_content = cleaned_data.get("post_title")
 
-        if description is not None and len(description) < 10:
+        if post_content is not None and len(post_content) < 10:
             raise ValidationError({
-                "description": "Описание не может быть менее 10 символов."
+                "post_content": "Описание не может быть менее 10 символов."
             })
 
         name = cleaned_data.get("post_content")

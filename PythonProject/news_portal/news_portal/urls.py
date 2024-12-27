@@ -19,19 +19,23 @@ from tkinter.font import names
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
-from appointment.views import AppointmentView
+
 from news.views import (BaseView, PostsList, PostsDetail,
                         PostCreate, PostUpdate, PostDelete, PostSearch, CategoryList, subscribe)
 
+from django.views.decorators.cache import cache_page
+
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', cache_page(60*5) (admin.site.urls)),
     path('', include('protect.urls')),
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
 
     path('appointment/', include('appointment.urls')),
 
-    path('news/', PostsList.as_view(), name='post_list'),
+    path('news/', cache_page(60*5)(PostsList.as_view()), name='post_list'),
     path('news/<int:pk>', PostsDetail.as_view(), name='post_detail'),
     path('categories/<int:pk>', CategoryList.as_view(), name='category_list'),
     path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
