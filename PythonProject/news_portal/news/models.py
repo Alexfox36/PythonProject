@@ -11,10 +11,9 @@ from django.contrib.auth.models import User
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     author_rating = models.FloatField(default=0.0)
+    is_active = models.BooleanField(default=True)
     def __str__(self):
         return f'{self.user}'
-
-
 
 
 class Categories(models.Model):

@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from tkinter.font import names
-
+from rest_framework import routers
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
@@ -25,6 +25,14 @@ from news.views import (BaseView, PostsList, PostsDetail,
 
 from django.views.decorators.cache import cache_page
 
+from news import views
+
+router = routers.DefaultRouter()
+router.register(r'author', views.AuthorViewset)
+router.register(r'categories', views.CategoriesViewset)
+router.register(r'user', views.UserViewset)
+router.register(r'comment', views.CommentViewset)
+router.register(r'post', views.PostViewset)
 
 
 urlpatterns = [
@@ -46,6 +54,7 @@ urlpatterns = [
     path('articles/create/', PostCreate.as_view(), name='articles_create'),
     path('articles/<int:pk>/update/', PostUpdate.as_view(), name='articles_update'),
     path('articles/<int:pk>/delete/', PostDelete.as_view(), name='articles_delete'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
 
 ]

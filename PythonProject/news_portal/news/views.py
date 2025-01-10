@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
@@ -7,16 +8,27 @@ from datetime import datetime
 from django.core.cache import cache
 
 from pyexpat.errors import messages
+from rest_framework.response import Response
 from unicodedata import category
 
+from django.shortcuts import render
+from rest_framework import viewsets, status
+from rest_framework import permissions
+
+
+from .models import *
+
 from .forms import PostForm
-from .models import Post, Categories
+from .models import Post, Categories, Author, Comment
 from django.views.generic import (TemplateView, ListView, DetailView,
                                   CreateView, UpdateView, DeleteView)
 from .filters import PostFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from appointment.tasks import send_m
+
+from .serializers import AuthorSerializer, CategoriesSerializer, UserSerializer, CommentSerializer, PostSerializer
+
 
 class BaseView(TemplateView):
     template_name = 'base.html'
@@ -39,7 +51,7 @@ class PostsList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['time_now'] = datetime.utcnow()
+        context['time_now'] = datetime.datetime.now(datetime. UTC)
         context['filterset'] = self.filterset
         return context
 
@@ -124,4 +136,35 @@ def subscribe(request, pk):
     category.subscribers.add(user)
     message = 'Вы подписались на рассылку новостей категории'
     return render(request, 'subscribe.html', {'category':category, 'message':message })
+
+
+
+class AuthorViewset(viewsets.ModelViewSet):
+   queryset = Author.objects.all()
+   serializer_class = AuthorSerializer
+   def list(self, request, format=None):
+       return Response([])
+
+   def destroy(self, request, pk, format=None):
+       instance = self.get_object()
+       instance.is_active = False
+       instance.save()
+       return Response(status=status.HTTP_204_NO_CONTENT)
+
+class CategoriesViewset(viewsets.ModelViewSet):
+   queryset = Categories.objects.all()
+   serializer_class = CategoriesSerializer
+
+class UserViewset(viewsets.ModelViewSet):
+   queryset = User.objects.all()
+   serializer_class = UserSerializer
+
+class CommentViewset(viewsets.ModelViewSet):
+   queryset = Comment.objects.all()
+   serializer_class = CommentSerializer
+
+class PostViewset(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
 
