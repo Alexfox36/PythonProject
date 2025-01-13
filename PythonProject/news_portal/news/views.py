@@ -142,14 +142,7 @@ def subscribe(request, pk):
 class AuthorViewset(viewsets.ModelViewSet):
    queryset = Author.objects.all()
    serializer_class = AuthorSerializer
-   def list(self, request, format=None):
-       return Response([])
 
-   def destroy(self, request, pk, format=None):
-       instance = self.get_object()
-       instance.is_active = False
-       instance.save()
-       return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CategoriesViewset(viewsets.ModelViewSet):
    queryset = Categories.objects.all()
@@ -166,5 +159,5 @@ class CommentViewset(viewsets.ModelViewSet):
 class PostViewset(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 

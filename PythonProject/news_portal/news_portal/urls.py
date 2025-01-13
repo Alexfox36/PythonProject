@@ -26,6 +26,7 @@ from news.views import (BaseView, PostsList, PostsDetail,
 from django.views.decorators.cache import cache_page
 
 from news import views
+from .yasg import urlpatterns as doc_urls
 
 router = routers.DefaultRouter()
 router.register(r'author', views.AuthorViewset)
@@ -55,6 +56,8 @@ urlpatterns = [
     path('articles/<int:pk>/update/', PostUpdate.as_view(), name='articles_update'),
     path('articles/<int:pk>/delete/', PostDelete.as_view(), name='articles_delete'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include(router.urls)),
 
 
 ]
+urlpatterns += doc_urls
